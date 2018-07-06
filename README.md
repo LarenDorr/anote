@@ -1,6 +1,6 @@
 # anote
 
-> a simple note app
+> a simple note app use electron and vue
 
 #### Build Setup
 

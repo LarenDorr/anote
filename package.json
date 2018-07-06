@@ -23,7 +23,7 @@
   },
   "build": {
     "productName": "anote",
-    "appId": "org.simulatedgreg.electron-vue",
+    "appId": "org.larendorr.anote",
     "directories": {
       "output": "build"
     },
