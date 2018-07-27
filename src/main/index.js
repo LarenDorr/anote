@@ -22,13 +22,14 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     nodeIntegration: false,
     useContentSize: true,
-    width: 800,
-    height: 500,
+    width: 600,
+    height: 450,
     frame: false
   })
 
   mainWindow.loadURL(winURL)
-
+  mainWindow.setMinimumSize(600, 450)
+  mainWindow.setMaximumSize(1200, 600)
   mainWindow.on('closed', () => {
     mainWindow = null
   })
@@ -52,10 +53,12 @@ ipcMain.on('closeMainWindow', () => {
   mainWindow.close()
 })
 ipcMain.on('maxSizeWindow', () => {
-  mainWindow.setFullScreen(true)
+  mainWindow.setSize(900, 600)
+  mainWindow.center()
 })
 ipcMain.on('minSizeWindow', () => {
-  mainWindow.setFullScreen(false)
+  mainWindow.setSize(600, 450)
+  mainWindow.center()
 })
 /**
  * Auto Updater
