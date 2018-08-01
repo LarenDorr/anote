@@ -28,7 +28,7 @@ function createWindow () {
   })
 
   mainWindow.loadURL(winURL)
-  mainWindow.setMinimumSize(600, 450)
+  mainWindow.setMinimumSize(590, 450)
   mainWindow.setMaximumSize(1200, 600)
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -57,7 +57,7 @@ ipcMain.on('maxSizeWindow', () => {
   mainWindow.center()
 })
 ipcMain.on('minSizeWindow', () => {
-  mainWindow.setSize(600, 450)
+  mainWindow.setSize(590, 450)
   mainWindow.center()
 })
 /**
