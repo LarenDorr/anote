@@ -6,13 +6,12 @@ const mutations = {
   addItem (state, item) {
     state.todayItems.push(item)
   },
-  changeItemStatus (state, item) {
-    state.todayItems = state.todayItems.filter(e => e.key !== item.key)
-    console.log(state.todayItems)
-    state.todayItems.push(item)
-  },
-  sortItem (items) {
-    return items
+  changeItem (state, {item, prop}) {
+    state.todayItems.forEach(e => {
+      if (e.key === item.key) {
+        e[prop] = item[prop]
+      }
+    })
   },
   deleteItem (state, key) {
     let items = state.todayItems
@@ -21,10 +20,10 @@ const mutations = {
 }
 
 const getters = {
-  toDoItems: state => {
+  toDoList: state => {
     return state.todayItems.filter(e => !e.status)
   },
-  doneItems: state => {
+  doneList: state => {
     return state.todayItems.filter(e => e.status)
   }
 }

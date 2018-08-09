@@ -1,7 +1,10 @@
 import Vue from 'vue'
 Vue.config.devtools = false
 Vue.config.productionTip = false
-
+import VueMaterial from 'vue-material'
+import anime from 'animejs'
+Vue.prototype.$anime = anime
+Vue.use(VueMaterial)
 // require all test files (files that ends with .spec.js)
 const testsContext = require.context('./specs', true, /\.spec$/)
 testsContext.keys().forEach(testsContext)

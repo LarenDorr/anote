@@ -1,61 +1,44 @@
 <template>
   <div class="list-item" :class="{'done-item': itemTmp.status,'todo-item': !itemTmp.status}">
     <md-checkbox v-model="itemTmp.status" class="item-check"></md-checkbox>
-    <md-field class="item-content" >
-      <md-input v-model="itemTmp.content" class="item-input" :class="{'item-important':itemTmp.top}"></md-input>
+    <md-field class="item-content" :class="{'item-important':itemTmp.top}">
+      <md-input v-model="itemTmp.content" class="item-input" ></md-input>
       <md-button class="md-icon-button item-top" @click="toggleTop">
         <md-icon v-if="itemTmp.top">arrow_downward</md-icon>
         <md-icon v-else>arrow_upward</md-icon>
       </md-button>
-      <md-button class="md-icon-button item-delete" @click="delItem(itemTmp.key)">
+      <md-button class="md-icon-button item-delete" @click="this.$emit('delete', itemTmp.key)">
         <md-icon>delete</md-icon>
       </md-button>
     </md-field>
   </div>
 </template>
 <script>
-import { mapMutations } from 'vuex'
-
 export default {
   name: 'todoItem',
   props: ['item'],
   data () {
     return {
-      itemTmp: Object.assign({}, this.item)
+      itemTmp: Object.assign({}, this.item) // 拷贝传入值
     }
   },
   watch: {
-    // itemTmp: {
-    //   handler: function (val, oldval) {
-    //     // this.modifyItem(this.itemTmp)
-    //     console.log(val, oldval)
-    //   },
-    //   deep: true
-    // },
+    itemTmp: {
+      handler: function (item) {
+        this.$emit('change', item)
+      },
+      deep: true
+    },
     item: function () { // 当store中的数据改变时传入
-      this.itemTmp = this.item
-    },
-    'itemTmp.status': function () { // item状态改变时
-      this.$emit('status-change', this.itemTmp)
-    },
-    'itemTmp.content': function () { // item状态改变时
-      this.$emit('content-change', this.itemTmp)
-    },
-    'itemTmp.top': function () { // item状态改变时
-      this.$emit('top-change', this.itemTmp)
+      console.log('item change')
+      this.itemTmp = Object.assign({}, this.item)
     }
   },
   methods: {
     toggleTop () {
       this.itemTmp.top = !this.itemTmp.top
       // this.itemMove()
-    },
-    delItem (key) {
-      this.deleteItem(key)
-    },
-    ...mapMutations([
-      'deleteItem'
-    ])
+    }
   }
 }
 </script>
@@ -68,7 +51,8 @@ export default {
 }
 .item-important{
   /* -webkit-text-fill-color: #448aff !important; */
-  font-weight: bold;
+  /* font-weight: bold; */
+  border-bottom: 1px solid black !important;
 }
 .item-check{
   margin: 0px 14px 8px 14px;

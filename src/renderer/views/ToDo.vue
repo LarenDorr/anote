@@ -1,36 +1,24 @@
 <template>
   <div class="to-do ">
     <div class="md-content todo ">
-      <div class="new-todo">
-        <md-field>
-          <!-- <md-icon>fiber_new</md-icon> -->
-          <label>Want to do</label>
-          <md-input v-model.lazy="newToDo.content" @keyup.enter="addItem" ></md-input>
-          <md-button class="md-icon-button" @click="addItem(newToDo)">
-            <md-icon>add</md-icon>
-          </md-button>
-        </md-field>
-      </div>
-      <md-tabs class="wrap-list md-scrollbar md-theme-default">
-        <md-tab id="tab-todo" md-label="待办" to="">
-          <md-content class="md-scrollbar list-content">
-            <ToDoItem v-for="item in toDoItems" :item="item" :key="item.key" 
-            @status-change="statusChange" ></ToDoItem>
-          </md-content>
-        </md-tab>
-        <md-tab id="tab-done" md-label="已办" to="">
-          <md-content class="md-scrollbar list-content">
-            <ToDoItem v-for="item in doneItems" :item="item" :key="item.key" 
-            @status-change="statusChange" ></ToDoItem>
-          </md-content>
-        </md-tab>
-      </md-tabs>
+      <NewToDo
+        :newToDo="newToDo"
+        :addToDo="addToDo"
+        class="todo-new"
+      ></NewToDo>
+      <ToDoList
+        :toDoList="toDoList"
+        :doneList="doneList"
+        :handleChange="handleChange"
+        class="todo-list"
+      ></ToDoList>
     </div>
     <div class="md-content graph">graph</div>
   </div>
 </template>
 <script>
-import ToDoItem from '../components/ToDoItem'
+import NewToDo from '@/components/ToDo/newToDo'
+import ToDoList from '@/components/ToDo/ToDoList'
 import { mapMutations, mapState, mapGetters } from 'vuex'
 export default {
   data () {
@@ -50,11 +38,50 @@ export default {
       'Items': state => state.ToDo.todayItems
     }),
     ...mapGetters([
-      'toDoItems',
-      'doneItems'
+      'toDoList',
+      'doneList'
     ])
   },
   methods: {
+    handleChange (item) {
+      let prop = this.diffChange(item)
+      const rules = {
+        content: () => {
+          console.log('content')
+        },
+        status: (res) => {
+          console.log('status')
+          if (item.status === true) {
+            this.moveItem(item, 'x', res)
+          }
+        },
+        top: () => {
+          console.log('top')
+        }
+      }
+      let p = new Promise((resolve, reject) => {
+        rules[prop](resolve)
+      })
+      p.then(() => {
+        this.changeItem({
+          item: item,
+          prop: prop
+        })
+      })
+    },
+    diffChange (item) {
+      let oldVal
+      this.Items.forEach(e => {
+        if (e.key === item.key) {
+          oldVal = e
+        }
+      })
+      for (let prop in oldVal) {
+        if (oldVal[prop] !== item[prop]) {
+          return prop
+        }
+      }
+    },
     statusChange (item) {
       // let index = this.getIndex(item.key)
       // if (item.status === true) {
@@ -83,11 +110,11 @@ export default {
     getIndex (item) {
       let items
       if (!item.status) { // 完成列表
-        items = this.doneItems
+        items = this.doneList
       } else {
-        items = this.toDoItems
+        items = this.toDoList
       }
-      console.log(item, this.toDoItems)
+      console.log(item, this.toDoList)
       let n = 0
       for (const e of items) {
         if (e.key === item.key) {
@@ -96,57 +123,99 @@ export default {
         n++
       }
     },
-    moveItem (item, res = undefined) {
-      let index = this.getIndex(item)
-      let element
-      let otherEle
-      let distanceX
-      let distanceY = '-48px'
-      if (item.status) {
-        let elements = document.querySelectorAll('.todo-item')
-        element = elements[index]
-        otherEle = [...elements].slice(index + 1)
-        distanceX = '100px'
-      } else {
-        let elements = document.querySelectorAll('.done-item')
-        element = elements[index]
-        otherEle = [...elements].slice(index + 1)
-        distanceX = '-100px'
-      }
+    moveItem (item, direction, cb) {
+      let index = this.getIndex(item) // 获取元素在其列表中的位置
+      let element // 变化的节点
+      let otherEle // 其他要变化的节点
+      let elementLen // 变化节点的运动长度
+      let otherEleLen // 其他节点的运动长度
       let tl = this.$anime.timeline()
-      tl.add({
-        targets: element,
-        translateX: distanceX,
-        opacity: 0,
-        easing: 'linear',
-        offset: 0,
-        complete: res
-      }).add({
-        targets: otherEle,
-        translateY: distanceY,
-        easing: 'linear',
-        offset: 0,
-        complete: () => {
-          otherEle.forEach(e => {
-            e.style.transform = ''
-          })
+
+      if (direction === 'x') { // 当为左右动画时
+        if (item.status === true) { // 向右移动
+          let elements = document.querySelectorAll('.todo-item')
+          console.log(elements)
+          element = elements[index]
+          otherEle = [...elements].slice(index + 1)
+          elementLen = '100px'
+        } else { // 向左移动
+          let elements = document.querySelectorAll('.done-item')
+          element = elements[index]
+          otherEle = [...elements].slice(index + 1)
+          elementLen = '-100px'
         }
-      })
+        otherEleLen = '-48px'
+        tl.add({
+          targets: element,
+          translateX: elementLen,
+          opacity: 0,
+          easing: 'linear',
+          offset: 0,
+          complete: cb
+        }).add({
+          targets: otherEle,
+          translateY: otherEleLen,
+          easing: 'linear',
+          offset: 0,
+          complete: () => {
+            otherEle.forEach(e => {
+              e.style.transform = ''
+            })
+          }
+        })
+      } else {
+      }
+      // let index = this.getIndex(item)
+      // let element
+      // let otherEle
+      // let distanceX
+      // let distanceY = '-48px'
+      // if (item.status) {
+      //   let elements = document.querySelectorAll('.todo-item')
+      //   element = elements[index]
+      //   otherEle = [...elements].slice(index + 1)
+      //   distanceX = '100px'
+      // } else {
+      //   let elements = document.querySelectorAll('.done-item')
+      //   element = elements[index]
+      //   otherEle = [...elements].slice(index + 1)
+      //   distanceX = '-100px'
+      // }
+      // let tl = this.$anime.timeline()
+      // tl.add({
+      //   targets: element,
+      //   translateX: distanceX,
+      //   opacity: 0,
+      //   easing: 'linear',
+      //   offset: 0,
+      //   complete: res
+      // }).add({
+      //   targets: otherEle,
+      //   translateY: distanceY,
+      //   easing: 'linear',
+      //   offset: 0,
+      //   complete: () => {
+      //     otherEle.forEach(e => {
+      //       e.style.transform = ''
+      //     })
+      //   }
+      // })
     },
-    addItem () {
+    addToDo () {
       if (this.newToDo.content === '') return
       this.newToDo.key = Date.now()
       let itemTmp = Object.assign({}, this.newToDo)
-      this.commitItem(itemTmp)
+      this.addItem(itemTmp)
       this.newToDo.content = ''
     },
-    ...mapMutations({
-      commitItem: 'addItem',
-      commitItemStatus: 'changeItemStatus'
-    })
+    ...mapMutations([
+      'addItem',
+      'changeItem'
+    ])
   },
   components: {
-    ToDoItem
+    NewToDo,
+    ToDoList
   }
 }
 </script>
@@ -165,28 +234,13 @@ export default {
   justify-content: space-around;
   align-items: center;
 }
-.new-todo{
-  height: 15%;
+.todo-new{
+  height: 20%;
   width: 80%;
 }
-.wrap-list{
+.todo-list{
   width: 80%;
   height: 80%;
-  overflow: auto;
-}
-.wrap-list > .md-content{
-  height: calc(100% - 48px) !important;
-}
-.wrap-list > .md-content > .md-tabs-container{
-  height: 100%;
-}
-.wrap-list .list-content {
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 100%;
-}
-#tab-todo, #tab-done{
-  height: 100%;
 }
 .graph{
   width: 30%;

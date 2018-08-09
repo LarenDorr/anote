@@ -1,0 +1,64 @@
+<template>
+  <div>
+    <md-tabs class="list-tabs md-scrollbar md-theme-default">
+      <md-tab id="tab-todo" md-label="待办" to="">
+        <md-content class="md-scrollbar list-content">
+          <ToDoItem v-for="toDo in toDoList" :item="toDo" :key="toDo.key" 
+          @change="handleChange" ></ToDoItem>
+        </md-content>
+      </md-tab>
+      <md-tab id="tab-done" md-label="已办" to="">
+        <md-content class="md-scrollbar list-content">
+          <ToDoItem v-for="done in doneList" :item="done" :key="done.key" 
+          @change="handleChange" ></ToDoItem>
+        </md-content>
+      </md-tab>
+    </md-tabs>
+  </div>
+</template>
+<script>
+import ToDoItem from '@/components/ToDo/ToDoItem'
+export default {
+  props: {
+    toDoList: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
+    doneList: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
+    handleChange: {
+      type: Function,
+      default: () => {}
+    }
+  },
+  components: {
+    ToDoItem
+  }
+}
+</script>
+<style>
+.list-tabs{
+  height: 100%;
+}
+/* 覆盖UI库样式 丑陋*/
+.list-tabs > .md-content{
+  height: calc(100% - 48px) !important;
+}
+.list-tabs > .md-content > .md-tabs-container{
+  height: 100%;
+}
+.list-tabs .list-content {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+}
+#tab-todo, #tab-done{
+  height: 100%;
+}
+</style>
