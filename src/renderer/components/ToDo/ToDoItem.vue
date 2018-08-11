@@ -1,5 +1,5 @@
 <template>
-  <div class="list-item" :class="{'done-item': itemTmp.status,'todo-item': !itemTmp.status}">
+  <div :class="{'done-item': itemTmp.status,'todo-item': !itemTmp.status}">
     <md-checkbox v-model="itemTmp.status" class="item-check"></md-checkbox>
     <md-field class="item-content" :class="{'item-important':itemTmp.top}">
       <md-input v-model="itemTmp.content" class="item-input" ></md-input>
@@ -7,7 +7,7 @@
         <md-icon v-if="itemTmp.top">arrow_downward</md-icon>
         <md-icon v-else>arrow_upward</md-icon>
       </md-button>
-      <md-button class="md-icon-button item-delete" @click="this.$emit('delete', itemTmp.key)">
+      <md-button class="md-icon-button item-delete" @click="handleDel">
         <md-icon>delete</md-icon>
       </md-button>
     </md-field>
@@ -35,9 +35,12 @@ export default {
     }
   },
   methods: {
+    handleDel () {
+      console.log(this.itemTmp)
+      this.$emit('delete', this.itemTmp)
+    },
     toggleTop () {
       this.itemTmp.top = !this.itemTmp.top
-      // this.itemMove()
     }
   }
 }

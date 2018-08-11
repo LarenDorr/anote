@@ -10,6 +10,7 @@
         :toDoList="toDoList"
         :doneList="doneList"
         :handleChange="handleChange"
+        :handleDelete="handleDelete"
         class="todo-list"
       ></ToDoList>
     </div>
@@ -47,26 +48,31 @@ export default {
       let prop = this.diffChange(item)
       const rules = {
         content: () => {
-          console.log('content')
+          this.changeItem({
+            item: item,
+            prop: prop
+          })
         },
-        status: (res) => {
-          console.log('status')
-          if (item.status === true) {
-            this.moveItem(item, 'x', res)
-          }
+        status: () => {
+          this.addAnime(this.computeAnimeData(item, prop)).then(() => {
+            this.changeItem({
+              item: item,
+              prop: prop
+            })
+          })
         },
         top: () => {
-          console.log('top')
+          this.changeItem({
+            item: item,
+            prop: prop
+          })
         }
       }
-      let p = new Promise((resolve, reject) => {
-        rules[prop](resolve)
-      })
-      p.then(() => {
-        this.changeItem({
-          item: item,
-          prop: prop
-        })
+      rules[prop]()
+    },
+    handleDelete (item) {
+      this.addAnime(this.computeAnimeData(item, 'delete')).then(() => {
+        this.deleteItem(item.key)
       })
     },
     diffChange (item) {
@@ -107,99 +113,99 @@ export default {
         this.commitItemStatus(item)
       })
     },
-    getIndex (item) {
-      let items
-      if (!item.status) { // 完成列表
-        items = this.doneList
-      } else {
-        items = this.toDoList
-      }
-      console.log(item, this.toDoList)
+    getIndex (key) {
       let n = 0
-      for (const e of items) {
-        if (e.key === item.key) {
+      for (const e of this.toDoList) {
+        if (e.key === key) {
+          return n
+        }
+        n++
+      }
+      n = 0
+      for (const e of this.doneList) {
+        if (e.key === key) {
           return n
         }
         n++
       }
     },
-    moveItem (item, direction, cb) {
-      let index = this.getIndex(item) // 获取元素在其列表中的位置
-      let element // 变化的节点
-      let otherEle // 其他要变化的节点
-      let elementLen // 变化节点的运动长度
-      let otherEleLen // 其他节点的运动长度
-      let tl = this.$anime.timeline()
-
-      if (direction === 'x') { // 当为左右动画时
-        if (item.status === true) { // 向右移动
+    computeAnimeData (item, prop) {
+      let index = this.getIndex(item.key) // 获取元素在其列表中的位置
+      let currentEle, otherEle, currentEleLen, otherEleLen
+      if (prop === 'status') { // 左右移动
+        if (item.status === true) { // 右移
           let elements = document.querySelectorAll('.todo-item')
-          console.log(elements)
-          element = elements[index]
+          currentEle = elements[index]
           otherEle = [...elements].slice(index + 1)
-          elementLen = '100px'
-        } else { // 向左移动
+          currentEleLen = '100px'
+        } else { // 左移
           let elements = document.querySelectorAll('.done-item')
-          element = elements[index]
+          currentEle = elements[index]
           otherEle = [...elements].slice(index + 1)
-          elementLen = '-100px'
+          currentEleLen = '-100px'
         }
         otherEleLen = '-48px'
-        tl.add({
-          targets: element,
-          translateX: elementLen,
-          opacity: 0,
-          easing: 'linear',
-          offset: 0,
-          complete: cb
-        }).add({
-          targets: otherEle,
-          translateY: otherEleLen,
-          easing: 'linear',
-          offset: 0,
-          complete: () => {
-            otherEle.forEach(e => {
-              e.style.transform = ''
-            })
+        return [
+          {
+            targets: currentEle,
+            translateX: currentEleLen,
+            opacity: 0,
+            easing: 'linear',
+            offset: 0
+          },
+          {
+            targets: otherEle,
+            translateY: otherEleLen,
+            easing: 'linear',
+            offset: 0
           }
-        })
-      } else {
+        ]
+      } else if (prop === 'top') { // 上下移动
+        if (item.top === true) {
+        }
+      } else if (prop === 'delete') { // 删除元素
+        let selector = item.status === true ? '.done-item' : '.todo-item'
+        let elements = document.querySelectorAll(selector)
+        currentEle = elements[index]
+        currentEleLen = '100px'
+        otherEle = [...elements].slice(index + 1)
+        otherEleLen = '-48px'
+        return [
+          {
+            targets: currentEle,
+            height: 0,
+            opacity: 0,
+            easing: 'linear',
+            offset: 0
+          },
+          {
+            targets: otherEle,
+            easing: 'linear',
+            offset: 0
+          }
+        ]
       }
-      // let index = this.getIndex(item)
-      // let element
-      // let otherEle
-      // let distanceX
-      // let distanceY = '-48px'
-      // if (item.status) {
-      //   let elements = document.querySelectorAll('.todo-item')
-      //   element = elements[index]
-      //   otherEle = [...elements].slice(index + 1)
-      //   distanceX = '100px'
-      // } else {
-      //   let elements = document.querySelectorAll('.done-item')
-      //   element = elements[index]
-      //   otherEle = [...elements].slice(index + 1)
-      //   distanceX = '-100px'
-      // }
-      // let tl = this.$anime.timeline()
-      // tl.add({
-      //   targets: element,
-      //   translateX: distanceX,
-      //   opacity: 0,
-      //   easing: 'linear',
-      //   offset: 0,
-      //   complete: res
-      // }).add({
-      //   targets: otherEle,
-      //   translateY: distanceY,
-      //   easing: 'linear',
-      //   offset: 0,
-      //   complete: () => {
-      //     otherEle.forEach(e => {
-      //       e.style.transform = ''
-      //     })
-      //   }
-      // })
+    },
+    addAnime (animeData) {
+      let current = animeData[0]
+      let other = animeData[1]
+      console.log(current, other)
+      return new Promise((resolve, reject) => {
+        let tl = this.$anime.timeline()
+        tl.add(Object.assign({
+          complete: () => {
+            resolve()
+            current.targets.removeAttribute('style')
+          }
+        }, current))
+          .add(Object.assign({
+            complete: () => {
+              other.targets.forEach(e => {
+                e.removeAttribute('style') // 消除anime动画库样式
+              })
+            }
+          }, other))
+      })
     },
     addToDo () {
       if (this.newToDo.content === '') return
@@ -210,7 +216,8 @@ export default {
     },
     ...mapMutations([
       'addItem',
-      'changeItem'
+      'changeItem',
+      'deleteItem'
     ])
   },
   components: {

@@ -4,13 +4,13 @@
       <md-tab id="tab-todo" md-label="待办" to="">
         <md-content class="md-scrollbar list-content">
           <ToDoItem v-for="toDo in toDoList" :item="toDo" :key="toDo.key" 
-          @change="handleChange" ></ToDoItem>
+          @change="handleChange" @delete="handleDelete" class="list-item"></ToDoItem>
         </md-content>
       </md-tab>
       <md-tab id="tab-done" md-label="已办" to="">
         <md-content class="md-scrollbar list-content">
           <ToDoItem v-for="done in doneList" :item="done" :key="done.key" 
-          @change="handleChange" ></ToDoItem>
+          @change="handleChange" @delete="handleDelete" class="list-item"></ToDoItem>
         </md-content>
       </md-tab>
     </md-tabs>
@@ -35,6 +35,10 @@ export default {
     handleChange: {
       type: Function,
       default: () => {}
+    },
+    handleDelete: {
+      type: Function,
+      default: () => {}
     }
   },
   components: {
@@ -45,6 +49,13 @@ export default {
 <style>
 .list-tabs{
   height: 100%;
+}
+.slide-fade > div{
+  transition: all 0.4s ease-out;
+	opacity: 0;
+}
+.slide-fade > .item-show{
+  opacity: 1;
 }
 /* 覆盖UI库样式 丑陋*/
 .list-tabs > .md-content{
