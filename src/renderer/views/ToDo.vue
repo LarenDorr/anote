@@ -20,6 +20,7 @@
 <script>
 import NewToDo from '@/components/ToDo/newToDo'
 import ToDoList from '@/components/ToDo/ToDoList'
+
 import { mapMutations, mapState, mapGetters } from 'vuex'
 export default {
   data () {
@@ -46,6 +47,9 @@ export default {
   methods: {
     handleChange (item) {
       let prop = this.diffChange(item)
+      if (prop === undefined) {
+        return
+      }
       const rules = {
         content: () => {
           this.changeItem({
@@ -54,6 +58,11 @@ export default {
           })
         },
         status: () => {
+          if (item.status === true) {
+            item.doneDate = this.$dayjs().unix()
+          } else {
+            item.doneDate = ''
+          }
           this.addAnime(this.computeAnimeData(item, prop)).then(() => {
             this.changeItem({
               item: item,
@@ -62,9 +71,11 @@ export default {
           })
         },
         top: () => {
-          this.changeItem({
-            item: item,
-            prop: prop
+          this.addAnime(this.computeAnimeData(item, prop)).then(() => {
+            this.changeItem({
+              item: item,
+              prop: prop
+            })
           })
         }
       }
@@ -87,31 +98,6 @@ export default {
           return prop
         }
       }
-    },
-    statusChange (item) {
-      // let index = this.getIndex(item.key)
-      // if (item.status === true) {
-      //   from = index
-      //   to = this.Items.length
-      // } else {
-      // }
-      // let p = new Promise((resolve, reject) => {
-      //   this.moveItem(from, to, resolve) // 添加动画
-      // })
-      // p.then(() => {
-      //   this.commitItemStatus(item)
-      //   let arr = [...(document.querySelectorAll('.list-item'))]
-      //   console.log(arr)
-      //   for (const e of arr) {
-      //     e.removeAttribute('style')
-      //   }
-      // })
-      let p = new Promise((resolve, reject) => {
-        this.moveItem(item, resolve)
-      })
-      p.then(() => {
-        this.commitItemStatus(item)
-      })
     },
     getIndex (key) {
       let n = 0
@@ -161,8 +147,33 @@ export default {
           }
         ]
       } else if (prop === 'top') { // 上下移动
-        if (item.top === true) {
+        if (item.top === true) { // 向上移动
+          let elements = document.querySelectorAll('.todo-item')
+          currentEle = elements[index]
+          currentEleLen = index * -48 + 'px'
+          otherEle = [...elements].slice(0, index)
+          otherEleLen = '48px'
+        } else {
+          let elements = document.querySelectorAll('.todo-item')
+          currentEle = elements[index]
+          currentEleLen = (elements.length - index - 1) * 48 + 'px'
+          otherEle = [...elements].slice(index + 1)
+          otherEleLen = '-48px'
         }
+        return [
+          {
+            targets: currentEle,
+            translateY: currentEleLen,
+            easing: 'linear',
+            offset: 0
+          },
+          {
+            targets: otherEle,
+            translateY: otherEleLen,
+            easing: 'linear',
+            offset: 0
+          }
+        ]
       } else if (prop === 'delete') { // 删除元素
         let selector = item.status === true ? '.done-item' : '.todo-item'
         let elements = document.querySelectorAll(selector)
@@ -189,7 +200,6 @@ export default {
     addAnime (animeData) {
       let current = animeData[0]
       let other = animeData[1]
-      console.log(current, other)
       return new Promise((resolve, reject) => {
         let tl = this.$anime.timeline()
         tl.add(Object.assign({
@@ -211,6 +221,7 @@ export default {
       if (this.newToDo.content === '') return
       this.newToDo.key = Date.now()
       let itemTmp = Object.assign({}, this.newToDo)
+      itemTmp.initDate = this.$dayjs().unix()
       this.addItem(itemTmp)
       this.newToDo.content = ''
     },

@@ -10,8 +10,16 @@ const mutations = {
     state.todayItems.forEach(e => {
       if (e.key === item.key) {
         e[prop] = item[prop]
+        e.doneDate = item.doneDate
       }
     })
+    // handle top change
+    state.todayItems = state.todayItems.filter(e => e.key !== item.key)
+    if (item.top === true) {
+      state.todayItems.unshift(item)
+    } else {
+      state.todayItems.push(item)
+    }
   },
   deleteItem (state, key) {
     let items = state.todayItems

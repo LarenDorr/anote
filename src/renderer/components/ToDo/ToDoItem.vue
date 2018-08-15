@@ -1,7 +1,7 @@
 <template>
   <div :class="{'done-item': itemTmp.status,'todo-item': !itemTmp.status}">
     <md-checkbox v-model="itemTmp.status" class="item-check"></md-checkbox>
-    <md-field class="item-content" :class="{'item-important':itemTmp.top}">
+    <md-field class="item-content">
       <md-input v-model="itemTmp.content" class="item-input" ></md-input>
       <md-button class="md-icon-button item-top" @click="toggleTop">
         <md-icon v-if="itemTmp.top">arrow_downward</md-icon>
@@ -10,6 +10,7 @@
       <md-button class="md-icon-button item-delete" @click="handleDel">
         <md-icon>delete</md-icon>
       </md-button>
+      <md-icon class="item-important" v-show="itemTmp.top">priority_high</md-icon>
     </md-field>
   </div>
 </template>
@@ -30,7 +31,6 @@ export default {
       deep: true
     },
     item: function () { // 当store中的数据改变时传入
-      console.log('item change')
       this.itemTmp = Object.assign({}, this.item)
     }
   },
@@ -52,10 +52,9 @@ export default {
   display: flex;
   align-items: center;
 }
+/* 修改UI库 */
 .item-important{
-  /* -webkit-text-fill-color: #448aff !important; */
-  /* font-weight: bold; */
-  border-bottom: 1px solid black !important;
+  margin-top: 8px !important;
 }
 .item-check{
   margin: 0px 14px 8px 14px;
