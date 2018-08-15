@@ -59,17 +59,17 @@
     "animejs": "^2.2.0",
     "dayjs": "^1.7.5",
     "moment": "^2.22.2",
-    "vue": "^2.3.3",
+    "vue": "^2.5.17",
     "vue-electron": "^1.0.6",
-    "vue-material": "^1.0.0-beta-10.2",
+    "vue-material": "1.0.0-beta-10.2",
     "vue-router": "^2.5.3",
     "vuex": "^2.3.1"
   },
   "devDependencies": {
-    "@vue/test-utils": "^1.0.0-beta.23",
+    "@vue/test-utils": "^1.0.0-beta.24",
     "babel-core": "^6.25.0",
     "babel-eslint": "^7.2.3",
-    "babel-loader": "^7.1.1",
+    "babel-loader": "^7.1.5",
     "babel-plugin-istanbul": "^4.1.1",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.0",
@@ -93,7 +93,7 @@
     "eslint-friendly-formatter": "^3.0.0",
     "eslint-loader": "^1.9.0",
     "eslint-plugin-html": "^3.1.1",
-    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^5.1.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
@@ -119,10 +119,10 @@
     "vue-html-loader": "^1.2.4",
     "vue-loader": "^13.0.5",
     "vue-style-loader": "^3.0.1",
-    "vue-template-compiler": "^2.4.2",
+    "vue-template-compiler": "^2.5.17",
     "webpack": "^3.5.2",
     "webpack-dev-server": "^2.7.1",
-    "webpack-hot-middleware": "^2.18.2",
-    "webpack-merge": "^4.1.0"
+    "webpack-hot-middleware": "^2.22.3",
+    "webpack-merge": "^4.1.4"
   }
 }

@@ -36,7 +36,6 @@ export default {
   },
   methods: {
     handleDel () {
-      console.log(this.itemTmp)
       this.$emit('delete', this.itemTmp)
     },
     toggleTop () {

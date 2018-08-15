@@ -18,7 +18,7 @@
   </div>
 </template>
 <script>
-import NewToDo from '@/components/ToDo/newToDo'
+import NewToDo from '@/components/ToDo/NewToDo'
 import ToDoList from '@/components/ToDo/ToDoList'
 
 import { mapMutations, mapState, mapGetters } from 'vuex'
