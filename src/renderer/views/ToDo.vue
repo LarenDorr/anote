@@ -56,6 +56,7 @@ export default {
             item: item,
             prop: prop
           })
+          this.saveData()
         },
         status: () => {
           if (item.status === true) {
@@ -68,6 +69,7 @@ export default {
               item: item,
               prop: prop
             })
+            this.saveData()
           })
         },
         top: () => {
@@ -76,6 +78,7 @@ export default {
               item: item,
               prop: prop
             })
+            this.saveData()
           })
         }
       }
@@ -84,6 +87,7 @@ export default {
     handleDelete (item) {
       this.addAnime(this.computeAnimeData(item, 'delete')).then(() => {
         this.deleteItem(item.key)
+        this.saveData()
       })
     },
     diffChange (item) {
@@ -224,12 +228,24 @@ export default {
       itemTmp.initDate = this.$dayjs().unix()
       this.addItem(itemTmp)
       this.newToDo.content = ''
+      this.saveData()
+    },
+    saveData () {
+      let today = this.$dayjs().format('YYYYMMDD')
+      this.$db.set(today, this.Items).write()
     },
     ...mapMutations([
       'addItem',
       'changeItem',
-      'deleteItem'
+      'deleteItem',
+      'initData'
     ])
+  },
+  mounted () {
+    let todayData = []
+    let today = this.$dayjs().format('YYYYMMDD')
+    todayData = this.$db.get(today).value() || []
+    this.initData(todayData)
   },
   components: {
     NewToDo,

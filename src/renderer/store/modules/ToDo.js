@@ -1,7 +1,6 @@
 const state = {
   todayItems: []
 }
-
 const mutations = {
   addItem (state, item) {
     state.todayItems.push(item)
@@ -24,9 +23,11 @@ const mutations = {
   deleteItem (state, key) {
     let items = state.todayItems
     state.todayItems = items.filter(item => item.key !== key)
+  },
+  initData (state, data) {
+    state.todayItems = data
   }
 }
-
 const getters = {
   toDoList: state => {
     return state.todayItems.filter(e => !e.status)
