@@ -19,7 +19,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "anote",
+    "productName": "ANote",
     "appId": "com.larendorr.anote",
     "directories": {
       "output": "build"

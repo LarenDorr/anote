@@ -52,10 +52,12 @@ app.on('activate', () => {
 ipcMain.on('closeMainWindow', () => {
   mainWindow.close()
 })
+
 ipcMain.on('maxSizeWindow', () => {
   mainWindow.setSize(900, 600)
   mainWindow.center()
 })
+
 ipcMain.on('minSizeWindow', () => {
   mainWindow.setSize(590, 450)
   mainWindow.center()

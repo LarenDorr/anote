@@ -241,10 +241,23 @@ export default {
       'initData'
     ])
   },
+  getYesterdayTodo () {
+    let yesterday = this.$dayjs().subtract(1, 'day').format('YYYYMMDD')
+    let yesterdayTodo = this.$db.get(yesterday).value() || []
+    return yesterdayTodo
+  },
   mounted () {
     let todayData = []
     let today = this.$dayjs().format('YYYYMMDD')
+    let yesterday = this.$dayjs().subtract(1, 'day').format('YYYYMMDD')
+    let yesterdayTodo = this.$db.get(yesterday).value() || []
+
     todayData = this.$db.get(today).value() || []
+    if (this.$db.get('isUpdatedYesterday').value() !== today) {
+      todayData = todayData.concat(yesterdayTodo.filter(todo => !todo.status))
+      this.$db.set('isUpdatedYesterday', today).write()
+      this.$db.set(today, todayData).write()
+    }
     this.initData(todayData)
   },
   components: {
