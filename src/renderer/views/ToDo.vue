@@ -7,8 +7,8 @@
         class="todo-new"
       ></NewToDo>
       <ToDoList
-        :toDoList="toDoList"
-        :doneList="doneList"
+        :toDoList="todos"
+        :doneList="dones"
         :handleChange="handleChange"
         :handleDelete="handleDelete"
         class="todo-list"
@@ -20,8 +20,8 @@
 <script>
 import NewToDo from '@/components/ToDo/NewToDo'
 import ToDoList from '@/components/ToDo/ToDoList'
+import { mapMutations, mapState } from 'vuex'
 
-import { mapMutations, mapState, mapGetters } from 'vuex'
 export default {
   data () {
     return {
@@ -37,12 +37,9 @@ export default {
   },
   computed: {
     ...mapState({
-      'Items': state => state.ToDo.todayItems
-    }),
-    ...mapGetters([
-      'toDoList',
-      'doneList'
-    ])
+      'todos': state => state.ToDo.todos,
+      'dones': state => state.ToDo.dones
+    })
   },
   methods: {
     handleChange (item) {
@@ -56,11 +53,11 @@ export default {
             item: item,
             prop: prop
           })
-          this.saveData()
         },
         status: () => {
           if (item.status === true) {
             item.doneDate = this.$dayjs().unix()
+            item.top = false
           } else {
             item.doneDate = ''
           }
@@ -69,7 +66,6 @@ export default {
               item: item,
               prop: prop
             })
-            this.saveData()
           })
         },
         top: () => {
@@ -78,7 +74,6 @@ export default {
               item: item,
               prop: prop
             })
-            this.saveData()
           })
         }
       }
@@ -87,12 +82,12 @@ export default {
     handleDelete (item) {
       this.addAnime(this.computeAnimeData(item, 'delete')).then(() => {
         this.deleteItem(item.key)
-        this.saveData()
       })
     },
-    diffChange (item) {
+    diffChange (item) { // 获取改变的属性name
       let oldVal
-      this.Items.forEach(e => {
+      let all = this.todos.concat(this.dones)
+      all.forEach(e => {
         if (e.key === item.key) {
           oldVal = e
         }
@@ -105,14 +100,14 @@ export default {
     },
     getIndex (key) {
       let n = 0
-      for (const e of this.toDoList) {
+      for (const e of this.todos) {
         if (e.key === key) {
           return n
         }
         n++
       }
       n = 0
-      for (const e of this.doneList) {
+      for (const e of this.dones) {
         if (e.key === key) {
           return n
         }
@@ -135,21 +130,36 @@ export default {
           currentEleLen = '-100px'
         }
         otherEleLen = '-48px'
-        return [
-          {
+        return {
+          mainEle: {
             targets: currentEle,
-            translateX: currentEleLen,
-            opacity: 0,
-            easing: 'linear',
-            offset: 0
+            anime: {
+              before: {
+                transform: 'translateX(0)',
+                opacity: 1
+              },
+              after: {
+                transform: `translateX(${currentEleLen})`,
+                opacity: 0
+              }
+            }
           },
-          {
+          otherEle: {
             targets: otherEle,
-            translateY: otherEleLen,
-            easing: 'linear',
-            offset: 0
+            anime: {
+              before: {
+                transform: 'translateY(0)'
+              },
+              after: {
+                transform: `translateY(${otherEleLen})`
+              }
+            }
+          },
+          timeline: {
+            duration: 1000,
+            easing: 'cubic-bezier(0.445, 0.05, 0.55, 0.95)'
           }
-        ]
+        }
       } else if (prop === 'top') { // 上下移动
         if (item.top === true) { // 向上移动
           let elements = document.querySelectorAll('.todo-item')
@@ -164,20 +174,34 @@ export default {
           otherEle = [...elements].slice(index + 1)
           otherEleLen = '-48px'
         }
-        return [
-          {
+        return {
+          mainEle: {
             targets: currentEle,
-            translateY: currentEleLen,
-            easing: 'linear',
-            offset: 0
+            anime: {
+              before: {
+                transform: 'translateY(0)'
+              },
+              after: {
+                transform: `translateY(${currentEleLen})`
+              }
+            }
           },
-          {
+          otherEle: {
             targets: otherEle,
-            translateY: otherEleLen,
-            easing: 'linear',
-            offset: 0
+            anime: {
+              before: {
+                transform: 'translateY(0)'
+              },
+              after: {
+                transform: `translateY(${otherEleLen})`
+              }
+            }
+          },
+          timeline: {
+            duration: 600,
+            easing: 'cubic-bezier(0.445, 0.05, 0.55, 0.95)'
           }
-        ]
+        }
       } else if (prop === 'delete') { // 删除元素
         let selector = item.status === true ? '.done-item' : '.todo-item'
         let elements = document.querySelectorAll(selector)
@@ -185,54 +209,74 @@ export default {
         currentEleLen = '100px'
         otherEle = [...elements].slice(index + 1)
         otherEleLen = '-48px'
-        return [
-          {
-            targets: currentEle,
-            height: 0,
-            opacity: 0,
-            easing: 'linear',
-            offset: 0
+        return {
+          mainEle: {
+            anime: {
+              before: {
+                height: '48px',
+                opacity: 1
+              },
+              after: {
+                height: '0px',
+                opacity: 0
+              }
+            },
+            targets: currentEle
           },
-          {
-            targets: otherEle,
-            easing: 'linear',
-            offset: 0
+          otherEle: null,
+          timeline: {
+            duration: 600,
+            easing: 'cubic-bezier(0.445, 0.05, 0.55, 0.95)'
           }
-        ]
+        }
       }
     },
     addAnime (animeData) {
-      let current = animeData[0]
-      let other = animeData[1]
       return new Promise((resolve, reject) => {
-        let tl = this.$anime.timeline()
-        tl.add(Object.assign({
-          complete: () => {
-            resolve()
-            current.targets.removeAttribute('style')
-          }
-        }, current))
-          .add(Object.assign({
-            complete: () => {
-              other.targets.forEach(e => {
-                e.removeAttribute('style') // 消除anime动画库样式
-              })
-            }
-          }, other))
+        let { mainEle, otherEle, timeline } = animeData // 主要元素 其他元素 和其缓动函数
+        let mainAnime = mainEle.targets.animate( // 主要元素添加动画
+          [mainEle.anime.before, mainEle.anime.after],
+          timeline
+        )
+        mainAnime.pause()
+        if (otherEle) { // 其他元素添加动画
+          otherEle.targets.forEach(e => {
+            e.animate(
+              [otherEle.anime.before, otherEle.anime.after],
+              timeline
+            )
+          })
+        }
+        mainAnime.onfinish = () => {
+          resolve()
+        }
+        mainAnime.play()
       })
     },
     addToDo () {
       if (this.newToDo.content === '') return
-      this.newToDo.key = Date.now()
+      let count = this.$db.get('todosCount').value() || 0
+      this.newToDo.key = count++
       let itemTmp = Object.assign({}, this.newToDo)
       itemTmp.initDate = this.$dayjs().unix()
       this.addItem(itemTmp)
       this.newToDo.content = ''
-      this.saveData()
+      this.$db.set('todosCount', count).write()
     },
-    saveData () {
+    putData () {
+      let db = this.$db
       let today = this.$dayjs().format('YYYYMMDD')
-      this.$db.set(today, this.Items).write()
+      db.set('todos', this.todos).write()
+      db.set(`dones.d${today}`, this.dones).write()
+    },
+    getData () {
+      let db = this.$db
+      let todos
+      let dones
+      let today = this.$dayjs().format('YYYYMMDD')
+      todos = db.get('todos').value() || []
+      dones = db.get(`dones.d${today}`).value() || []
+      return {todos, dones}
     },
     ...mapMutations([
       'addItem',
@@ -241,24 +285,11 @@ export default {
       'initData'
     ])
   },
-  getYesterdayTodo () {
-    let yesterday = this.$dayjs().subtract(1, 'day').format('YYYYMMDD')
-    let yesterdayTodo = this.$db.get(yesterday).value() || []
-    return yesterdayTodo
+  updated () {
+    this.putData()
   },
   mounted () {
-    let todayData = []
-    let today = this.$dayjs().format('YYYYMMDD')
-    let yesterday = this.$dayjs().subtract(1, 'day').format('YYYYMMDD')
-    let yesterdayTodo = this.$db.get(yesterday).value() || []
-
-    todayData = this.$db.get(today).value() || []
-    if (this.$db.get('isUpdatedYesterday').value() !== today) {
-      todayData = todayData.concat(yesterdayTodo.filter(todo => !todo.status))
-      this.$db.set('isUpdatedYesterday', today).write()
-      this.$db.set(today, todayData).write()
-    }
-    this.initData(todayData)
+    this.initData(this.getData()) // 从db中获取data赋给redux
   },
   components: {
     NewToDo,

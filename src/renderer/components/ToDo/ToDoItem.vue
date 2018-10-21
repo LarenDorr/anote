@@ -3,11 +3,11 @@
     <md-checkbox v-model="itemTmp.status" class="item-check"></md-checkbox>
     <md-field class="item-content">
       <md-input v-model="itemTmp.content" class="item-input" ></md-input>
-      <md-button class="md-icon-button item-top" @click="toggleTop">
+      <md-button class="md-icon-button item-top" @click="toggleTop" v-show="!this.isFreeze">
         <md-icon v-if="itemTmp.top">arrow_downward</md-icon>
         <md-icon v-else>arrow_upward</md-icon>
       </md-button>
-      <md-button class="md-icon-button item-delete" @click="handleDel">
+      <md-button class="md-icon-button item-delete" @click="handleDel" v-show="!this.isFreeze">
         <md-icon>delete</md-icon>
       </md-button>
       <md-icon class="item-important" v-show="itemTmp.top">priority_high</md-icon>
@@ -17,7 +17,7 @@
 <script>
 export default {
   name: 'todoItem',
-  props: ['item'],
+  props: ['item', 'isFreeze'],
   data () {
     return {
       itemTmp: Object.assign({}, this.item) // 拷贝传入值
@@ -26,7 +26,7 @@ export default {
   watch: {
     itemTmp: {
       handler: function (item) {
-        this.$emit('change', item)
+        this.$emit('change', Object.assign({}, item))
       },
       deep: true
     },

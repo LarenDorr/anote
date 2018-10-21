@@ -4,13 +4,15 @@
       <md-tab id="tab-todo" md-label="待办" to="">
         <md-content class="md-scrollbar list-content">
           <ToDoItem v-for="toDo in toDoList" :item="toDo" :key="toDo.key" 
-          @change="handleChange" @delete="handleDelete" class="list-item"></ToDoItem>
+          @change="handleChange" @delete="handleDelete" class="list-item" 
+          :isFreeze=false></ToDoItem>
         </md-content>
       </md-tab>
       <md-tab id="tab-done" md-label="已办" to="">
         <md-content class="md-scrollbar list-content">
           <ToDoItem v-for="done in doneList" :item="done" :key="done.key" 
-          @change="handleChange" @delete="handleDelete" class="list-item"></ToDoItem>
+          @change="handleChange" @delete="handleDelete" class="list-item" 
+          :isFreeze=true></ToDoItem>
         </md-content>
       </md-tab>
     </md-tabs>
