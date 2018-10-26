@@ -10,7 +10,9 @@ const mutations = {
     let rules = {
       'content' () {
         state.todos.forEach(e => {
-          e[prop] = item[prop]
+          if (e.key === item.key) {
+            e[prop] = item[prop]
+          }
         })
       },
       'top' () {
