@@ -1,6 +1,6 @@
 <template>
   <div class="to-do ">
-    <div class="md-content todo ">
+    <div class="md-content todo">
       <NewToDo
         :newToDo="newToDo"
         :addToDo="addToDo"
@@ -301,14 +301,16 @@ export default {
 </script>
 <style>
 .to-do{
-  width: 830px;
+  width: 100%;
   height: 100%;
 }
 .to-do > div {
   height: 100%;
 }
 .todo{
-  width: 530px;
+  width: 90%;
+  max-width: 800px;
+  min-width: 530px;
   display: inline-flex;
   flex-direction: column;
   justify-content: space-around;
