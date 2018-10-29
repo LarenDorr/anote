@@ -59,10 +59,13 @@ export default {
 .slide-fade > .item-show{
   opacity: 1;
 }
-/* 覆盖UI库样式 丑陋*/
+/* 覆盖UI库样式*/
 .list-tabs > .md-content{
   height: calc(100% - 48px) !important;
 }
+#tab-todo{
+  padding: 0 !important;
+} 
 .list-tabs > .md-content > .md-tabs-container{
   height: 100%;
 }

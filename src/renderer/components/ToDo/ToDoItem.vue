@@ -1,7 +1,8 @@
 <template>
   <div :class="{'done-item': itemTmp.status,'todo-item': !itemTmp.status}">
     <md-checkbox v-model="itemTmp.status" class="item-check"></md-checkbox>
-    <md-field class="item-content" >
+    <md-field class="item-content">
+      <span class="md-prefix item-tag" v-if="todoSetting.hasTodoTag">{{itemTag}}</span>
       <md-input v-model="itemTmp.content" class="item-input"></md-input>
       <md-icon class="item-important" v-show="itemTmp.top">priority_high</md-icon>
     </md-field>
@@ -15,6 +16,8 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: 'todoItem',
   props: ['item', 'isFreeze'],
@@ -22,6 +25,19 @@ export default {
     return {
       itemTmp: Object.assign({}, this.item) // 拷贝传入值
     }
+  },
+  computed: {
+    itemTag: function () { // 兼容性设置
+      let tag = this.itemTmp.tag
+      if (tag) {
+        return `[${tag}]`
+      } else {
+        return ``
+      }
+    },
+    ...mapState({
+      'todoSetting': state => state.Setting.todo
+    })
   },
   watch: {
     itemTmp: {
@@ -54,10 +70,10 @@ export default {
 .item-input{
   text-overflow: ellipsis;
 }
-/* 修改UI库 */
-.item-important{
-  margin-top: 8px !important;
+.item-tag{
+  color: black !important;
 }
+/* 修改UI库 */
 .item-check{
   margin: 0px 14px 8px 14px;
 }

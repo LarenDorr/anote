@@ -1,6 +1,6 @@
 const state = {
   todos: [], // 存放所有未完成的待办
-  dones: [] // 存放今日完成的待办
+  dones: [] // 存放*今日*完成的待办
 }
 const mutations = {
   addItem (state, item) { // 添加todo

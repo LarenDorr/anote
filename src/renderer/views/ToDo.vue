@@ -4,6 +4,7 @@
       <NewToDo
         :newToDo="newToDo"
         :addToDo="addToDo"
+        :setting="todoSetting"
         class="todo-new"
       ></NewToDo>
       <ToDoList
@@ -31,14 +32,16 @@ export default {
         initDate: '',
         doneDate: '',
         key: '',
-        top: false
+        top: false,
+        tag: ''
       }
     }
   },
   computed: {
     ...mapState({
       'todos': state => state.ToDo.todos,
-      'dones': state => state.ToDo.dones
+      'dones': state => state.ToDo.dones,
+      'todoSetting': state => state.Setting.todo
     })
   },
   methods: {
@@ -261,6 +264,7 @@ export default {
       itemTmp.initDate = this.$dayjs().unix()
       this.addItem(itemTmp)
       this.newToDo.content = ''
+      this.newToDo.tag = ''
       this.$db.set('todosCount', count).write()
     },
     putData () {
@@ -271,11 +275,9 @@ export default {
     },
     getData () {
       let db = this.$db
-      let todos
-      let dones
       let today = this.$dayjs().format('YYYYMMDD')
-      todos = db.get('todos').value() || []
-      dones = db.get(`dones.d${today}`).value() || []
+      let todos = db.get('todos').value() || []
+      let dones = db.get(`dones.d${today}`).value() || []
       return {todos, dones}
     },
     ...mapMutations([
@@ -315,6 +317,8 @@ export default {
 .todo-new{
   height: 20%;
   width: 80%;
+  display: flex;
+  align-items: center;
 }
 .todo-list{
   width: 80%;
