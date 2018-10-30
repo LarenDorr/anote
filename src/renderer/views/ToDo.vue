@@ -15,7 +15,7 @@
         class="todo-list"
       ></ToDoList>
     </div>
-    <div class="md-content graph">graph</div>
+    <!-- <div class="md-content graph">graph</div> -->
   </div>
 </template>
 <script>

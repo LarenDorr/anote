@@ -46,6 +46,9 @@ export default {
 </script>
 
 <style>
+.setting{
+  height: 100%;
+}
 .setting-tabs{
   width: 80%;
   margin: 30px 0 0 40px;

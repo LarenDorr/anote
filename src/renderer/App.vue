@@ -79,6 +79,7 @@ export default {
 <style>
   html, body {
     height: 100%;
+    font-family: 'Microsoft YaHei' !important;
   }
   #app{
     height: 100%;
