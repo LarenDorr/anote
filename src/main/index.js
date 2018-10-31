@@ -9,7 +9,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
-
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true // 关闭security警告
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`

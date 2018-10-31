@@ -3,16 +3,20 @@
     <md-tabs class="list-tabs md-scrollbar md-theme-default">
       <md-tab id="tab-todo" md-label="待办" to="">
         <md-content class="md-scrollbar list-content">
-          <ToDoItem v-for="toDo in toDoList" :item="toDo" :key="toDo.key" 
-          @change="handleChange" @delete="handleDelete" class="list-item" 
-          :isFreeze=false></ToDoItem>
+          <transition-group name="list-todo" >
+            <ToDoItem v-for="toDo in toDoList" :item="toDo" :key="toDo.key" 
+            @change="handleChange" @delete="handleDelete" class="list-item" 
+            :isFreeze=false></ToDoItem>
+          </transition-group>
         </md-content>
       </md-tab>
       <md-tab id="tab-done" md-label="已办" to="">
         <md-content class="md-scrollbar list-content">
-          <ToDoItem v-for="done in doneList" :item="done" :key="done.key" 
-          @change="handleChange" @delete="handleDelete" class="list-item" 
-          :isFreeze=true></ToDoItem>
+          <transition-group name="list-dones" >
+            <ToDoItem v-for="done in doneList" :item="done" :key="done.key" 
+            @change="handleChange" @delete="handleDelete" class="list-item" 
+            :isFreeze=true></ToDoItem>
+          </transition-group>
         </md-content>
       </md-tab>
     </md-tabs>
@@ -58,6 +62,20 @@ export default {
 }
 .slide-fade > .item-show{
   opacity: 1;
+}
+.list-item{
+  transition: all 0.5s;
+}
+.list-todo-enter, .list-todo-leave-to{
+  opacity: 0;
+  transform: translateX(50px);
+}
+.list-dones-enter, .list-dones-leave-to{
+  opacity: 0;
+  transform: translateX(-50px);
+}
+.list-todo-leave-active, .list-dones-leave-active {
+  position: absolute;
 }
 /* 覆盖UI库样式*/
 .list-tabs > .md-content{
