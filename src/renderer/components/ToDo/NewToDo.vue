@@ -8,10 +8,10 @@
     </md-field>
     <md-field>
       <label>Want to do</label>
-      <md-input v-model="newToDo.content" @keyup.enter="addToDo" ></md-input>
+      <md-input v-model="newToDo.content" @keyup.enter="addTodo" ></md-input>
     </md-field>
-    <md-button class="md-icon-button" @click="addToDo">
-      <md-icon>add</md-icon>
+    <md-button class="md-icon-button" @click="clearNewTodo">
+      <md-icon>clear</md-icon>
     </md-button>
   </div>
 </template>
@@ -21,11 +21,14 @@ export default {
     newToDo: {
       type: Object
     },
-    addToDo: {
+    addTodo: {
       type: Function
     },
     setting: {
       type: Object
+    },
+    clearNewTodo: {
+      type: Function
     }
   }
 }

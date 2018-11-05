@@ -38,9 +38,53 @@ export default {
       }
     }
   },
+  methods: {
+    sortTag () {
+      let db = this.$db
+      let dones = db.get('dones').value()
+      let todos = db.get('todos').value()
+      let tags = db.get('setting').value().todo.todoTags.concat([]) // 正在使用的tags
+      let allTodos = [] // 所有todo
+      allTodos.push(...todos)
+      for (const day in dones) {
+        allTodos.push(...dones[day])
+      }
+      let allTags = [] // 所有todo的tags
+      allTodos.forEach(e => {
+        if (e.tag && !allTags.includes(e.tag)) {
+          allTags.push(e.tag)
+        }
+      })
+      allTags = Array.from(new Set(allTags.concat(tags))) // 某些tag还没有todo
+      let result = {} // 所有tag的使用次数的结果
+      allTags.forEach(e => {
+        result[e] = 0
+      })
+      allTodos.forEach(e => {
+        if (e.tag && allTags.includes(e.tag)) {
+          result[e.tag] += 1
+        }
+      })
+      tags.sort((a, b) => { // 按使用次数的多少进行排序
+        if (result[a] > result[b]) {
+          return -1
+        }
+        if (result[a] < result[b]) {
+          return 1
+        }
+        if (result[a] === result[b]) {
+          return 0
+        }
+      })
+      this.$store.commit('changeTags', tags)
+    }
+  },
   updated () {
     let setting = this.$store.state.Setting
     this.$db.set('setting', setting).write()
+  },
+  mounted () {
+    this.sortTag()
   }
 }
 </script>

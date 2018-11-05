@@ -1,6 +1,7 @@
 'use strict'
 
 import { app, BrowserWindow, ipcMain } from 'electron'
+import db from '../datastore'
 
 /**
  * Set `__static` path to static files in production
@@ -15,6 +16,10 @@ const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
+let setting
+setting = db.get('setting.window').value() || {width: 600, height: 450}
+let {width, height, left = 0, top = 0} = setting
+
 function createWindow () {
   /**
    * Initial window options
@@ -22,14 +27,24 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     nodeIntegration: false,
     useContentSize: true,
-    width: 600,
-    height: 450,
+    width: width,
+    height: height,
+    x: left,
+    y: top,
     frame: false
   })
-
   mainWindow.loadURL(winURL)
   mainWindow.setMinimumSize(590, 450)
-  // mainWindow.setMaximumSize(1200, 600)
+  mainWindow.on('close', () => {
+    let [width, height] = mainWindow.getSize()
+    let [left, top] = mainWindow.getPosition()
+    db.set('setting.window', {
+      width: width,
+      height: height,
+      left: left,
+      top: top
+    }).write()
+  })
   mainWindow.on('closed', () => {
     mainWindow = null
   })

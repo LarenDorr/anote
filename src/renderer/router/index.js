@@ -16,22 +16,34 @@ export default new Router({
     {
       path: '/todo',
       name: 'todo',
-      component: ToDo
+      component: ToDo,
+      meta: {
+        name: '待办'
+      }
     },
     {
       path: '/log',
       name: 'log',
-      component: Log
+      component: Log,
+      meta: {
+        name: '日志'
+      }
     },
     {
       path: '/note',
       name: 'note',
-      component: Note
+      component: Note,
+      meta: {
+        name: '笔记'
+      }
     },
     {
       path: '/setting',
       name: 'setting',
-      component: Setting
+      component: Setting,
+      meta: {
+        name: '设置'
+      }
     }
   ]
 })

@@ -8,7 +8,7 @@ const APP = process.type === 'renderer' ? remote.app : app
 const STORE_PATH = APP.getPath('userData')
 
 if (process.type !== 'renderer') {
-  if (!fs.pathExistsSync(STORE_PATH)) {
+  if (!fs.existsSync(STORE_PATH)) {
     fs.mkdirpSync(STORE_PATH)
   }
 }

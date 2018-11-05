@@ -53,7 +53,7 @@
     transform: translateY(100%);
    }
   .slide-down-enter-active, .slide-down-leave-active {
-    transition: all linear 0.15s;
+    transition: all linear 0.1s;
   }
   .slide-down-enter{
     opacity: 0;

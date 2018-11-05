@@ -28,12 +28,16 @@ export default {
   data () {
     return {
       isFullScreen: false,
-      currentTab: '待办',
       tabs: [
         {icon: 'format_list_bulleted', text: '待办', route: 'todo'},
-        {icon: 'insert_drive_file', text: '便笺', route: 'note'},
+        {icon: 'insert_drive_file', text: '笔记', route: 'note'},
         {icon: 'edit', text: '日志', route: 'log'}
       ]
+    }
+  },
+  computed: {
+    currentTab () {
+      return this.$route.meta.name
     }
   },
   methods: {
@@ -51,11 +55,11 @@ export default {
     },
     goTo (route, name) {
       this.$router.push(`/${route}`)
-      this.currentTab = name
     },
     ...mapMutations(['initSetting'])
   },
   mounted () {
+    // 获取Setting
     let setting = this.$db.get('setting').value()
     if (!setting) {
       setting = {

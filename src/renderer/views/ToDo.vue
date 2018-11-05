@@ -3,8 +3,9 @@
     <div class="md-content todo">
       <NewToDo
         :newToDo="newToDo"
-        :addToDo="addToDo"
+        :clearNewTodo="clearNewTodo"
         :setting="todoSetting"
+        :addTodo="addTodo"
         class="todo-new"
       ></NewToDo>
       <ToDoList
@@ -111,7 +112,7 @@ export default {
         n++
       }
     },
-    addToDo () {
+    addTodo () {
       if (this.newToDo.content === '') return
       let count = this.$db.get('todosCount').value() || 0
       this.newToDo.key = count++
@@ -121,6 +122,10 @@ export default {
       this.newToDo.content = ''
       this.newToDo.tag = ''
       this.$db.set('todosCount', count).write()
+    },
+    clearNewTodo () {
+      this.newToDo.tag = ''
+      this.newToDo.content = ''
     },
     putData () {
       let db = this.$db
