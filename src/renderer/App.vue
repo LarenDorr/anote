@@ -20,6 +20,7 @@ import TopBar from '@/components/TopBar'
 import LeftBar from '@/components/LeftBar'
 import Content from '@/components/Content'
 import { mapMutations } from 'vuex'
+import db from 'src/localdb'
 
 let ipc = require('electron').ipcRenderer
 
@@ -56,21 +57,16 @@ export default {
     goTo (route, name) {
       this.$router.push(`/${route}`)
     },
-    ...mapMutations(['initSetting'])
+    ...mapMutations([
+      'initTodo',
+      'initSetting'
+    ])
   },
   mounted () {
-    // 获取Setting
-    let setting = this.$db.get('setting').value()
-    if (!setting) {
-      setting = {
-        todo: {
-          hasTodoTag: false,
-          todoTags: []
-        },
-        note: {},
-        log: {}
-      }
-    }
+    let todos = db.getTodos()
+    let dones = db.getDones()
+    let setting = db.getSetting()
+    this.initTodo({todos, dones})
     this.initSetting(setting)
   },
   components: {

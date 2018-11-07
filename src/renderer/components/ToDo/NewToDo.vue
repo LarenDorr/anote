@@ -1,16 +1,19 @@
 <template>
   <div>
+    <!-- Tag select -->
     <md-field class="newtodo-tag fix-drag" v-if="setting.hasTodoTag">
       <label>Tag</label>
       <md-select v-model="newToDo.tag" md-dense>
         <md-option v-for="(tag, index) in setting.todoTags" :value="tag" :key="index">{{tag}}</md-option>
       </md-select>
     </md-field>
+    <!-- new Todo -->
     <md-field>
       <label>Want to do</label>
-      <md-input v-model="newToDo.content" @keyup.enter="addTodo" ></md-input>
+      <md-input v-model="newToDo.content" @keyup.enter="onAddTodo" ></md-input>
     </md-field>
-    <md-button class="md-icon-button" @click="clearNewTodo">
+    <!-- clear button -->
+    <md-button class="md-icon-button" @click="onClear">
       <md-icon>clear</md-icon>
     </md-button>
   </div>
@@ -21,13 +24,13 @@ export default {
     newToDo: {
       type: Object
     },
-    addTodo: {
+    onAddTodo: {
       type: Function
     },
     setting: {
       type: Object
     },
-    clearNewTodo: {
+    onClear: {
       type: Function
     }
   }

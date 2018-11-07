@@ -3,9 +3,9 @@
     <div class="md-content todo">
       <NewToDo
         :newToDo="newToDo"
-        :clearNewTodo="clearNewTodo"
+        :onClear="clearNewTodo"
         :setting="todoSetting"
-        :addTodo="addTodo"
+        :onAddTodo="addTodo"
         class="todo-new"
       ></NewToDo>
       <ToDoList
@@ -23,66 +23,58 @@
 import NewToDo from '@/components/ToDo/NewToDo'
 import ToDoList from '@/components/ToDo/ToDoList'
 import { mapMutations, mapState } from 'vuex'
-
+import db from 'src/localdb'
 export default {
   data () {
     return {
-      newToDo: {
-        status: false,
-        content: '',
-        initDate: '',
-        doneDate: '',
-        key: '',
-        top: false,
-        tag: ''
+      newToDo: { // 新创建的todo
+        status: false, // 是否完成
+        content: '', // 具体内容
+        initDate: '', // 创建日期
+        doneDate: '', // 完成日期
+        key: '', // todo唯一key
+        top: false, // 是否置顶
+        tag: '' // 标签
       }
     }
   },
   computed: {
     ...mapState({
-      'todos': state => state.ToDo.todos,
-      'dones': state => state.ToDo.dones,
-      'todoSetting': state => state.Setting.todo
+      'todos': state => state.ToDo.todos, // 待完成的todos
+      'dones': state => state.ToDo.dones, // 今日完成的todos
+      'todoSetting': state => state.Setting.todo // 相关的todo设置项
     })
   },
   methods: {
     handleChange (item) {
       let prop = this.diffChange(item)
-      if (prop === undefined) {
+      if (!prop) {
         return
       }
-      const rules = { // 使用对象来代替if-else
+      const addition = { // 不同类型的附加操作
         content: () => {
-          this.changeItem({
-            item: item,
-            prop: prop
-          })
         },
-        status: () => {
+        status: () => { // top属性置为默认值, 添加或清除完成日期
           if (item.status === true) {
             item.doneDate = this.$dayjs().unix()
             item.top = false
           } else {
             item.doneDate = ''
           }
-          this.changeItem({
-            item: item,
-            prop: prop
-          })
         },
         top: () => {
-          this.changeItem({
-            item: item,
-            prop: prop
-          })
         }
       }
-      rules[prop]()
+      addition[prop]()
+      this.changeItem({
+        item: item,
+        prop: prop
+      })
     },
     handleDelete (item) {
       this.deleteItem(item.key)
     },
-    diffChange (item) { // 获取改变的属性name
+    diffChange (item) { // 获取改变的属性名
       let oldVal
       let all = this.todos.concat(this.dones)
       all.forEach(e => {
@@ -96,62 +88,40 @@ export default {
         }
       }
     },
-    getIndex (key) {
-      let n = 0
-      for (const e of this.todos) {
-        if (e.key === key) {
-          return n
-        }
-        n++
-      }
-      n = 0
-      for (const e of this.dones) {
-        if (e.key === key) {
-          return n
-        }
-        n++
-      }
-    },
     addTodo () {
       if (this.newToDo.content === '') return
-      let count = this.$db.get('todosCount').value() || 0
+      // 设置newTodo key
+      let count = db.getTodosCount()
       this.newToDo.key = count++
       let itemTmp = Object.assign({}, this.newToDo)
       itemTmp.initDate = this.$dayjs().unix()
       this.addItem(itemTmp)
-      this.newToDo.content = ''
-      this.newToDo.tag = ''
-      this.$db.set('todosCount', count).write()
+      this.clearNewTodo()
+      db.setTodosCount(count)
     },
     clearNewTodo () {
       this.newToDo.tag = ''
       this.newToDo.content = ''
     },
-    putData () {
-      let db = this.$db
-      let today = this.$dayjs().format('YYYYMMDD')
-      db.set('todos', this.todos).write()
-      db.set(`dones.d${today}`, this.dones).write()
+    putData () { // 存储数据
+      db.setTodos(this.todos)
+      db.setDones(this.dones)
     },
-    getData () {
-      let db = this.$db
-      let today = this.$dayjs().format('YYYYMMDD')
-      let todos = db.get('todos').value() || []
-      let dones = db.get(`dones.d${today}`).value() || []
+    getData () { // 获取数据
+      let todos = db.getTodos()
+      let dones = db.getDones()
       return {todos, dones}
     },
     ...mapMutations([
       'addItem',
       'changeItem',
-      'deleteItem',
-      'initData'
+      'deleteItem'
     ])
   },
   updated () {
     this.putData() // 存储vuex中数据至db
   },
   mounted () {
-    this.initData(this.getData()) // 从db中获取data赋给redux
   },
   components: {
     NewToDo,

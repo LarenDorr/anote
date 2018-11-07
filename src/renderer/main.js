@@ -8,9 +8,7 @@ import router from './router'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import store from './store'
-import db from '../datastore'
 
-Vue.prototype.$db = db
 dayjs.locale('zh-cn')
 Vue.prototype.$dayjs = dayjs
 Vue.use(VueMaterial)

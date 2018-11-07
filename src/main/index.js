@@ -1,8 +1,12 @@
 'use strict'
 
 import { app, BrowserWindow, ipcMain } from 'electron'
-import db from '../datastore'
 
+import db from '../localdb/datastore'
+import log from 'electron-log'
+log.transports.console.level = 'warn'
+log.transports.file.level = 'info'
+log.transports.file.file = app.getPath('userData') + '/log.txt'
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html

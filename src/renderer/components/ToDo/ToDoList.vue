@@ -1,6 +1,7 @@
 <template>
   <div>
     <md-tabs class="list-tabs md-scrollbar md-theme-default">
+      <!-- todo list -->
       <md-tab id="tab-todo" md-label="待办" to="">
         <md-content class="md-scrollbar list-content">
           <transition-group name="list-todo" >
@@ -10,6 +11,7 @@
           </transition-group>
         </md-content>
       </md-tab>
+      <!-- done todo list -->
       <md-tab id="tab-done" md-label="已办" to="">
         <md-content class="md-scrollbar list-content">
           <transition-group name="list-dones" >
@@ -28,15 +30,11 @@ export default {
   props: {
     toDoList: {
       type: Array,
-      default: () => {
-        return []
-      }
+      default: () => []
     },
     doneList: {
       type: Array,
-      default: () => {
-        return []
-      }
+      default: () => []
     },
     handleChange: {
       type: Function,

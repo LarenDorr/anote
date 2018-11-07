@@ -39,7 +39,7 @@ const mutations = {
     state.todos = state.todos.filter(item => item.key !== key)
     state.dones = state.dones.filter(item => item.key !== key)
   },
-  initData (state, data) {
+  initTodo (state, data) {
     state.todos = data.todos
     state.dones = data.dones
   }

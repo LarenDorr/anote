@@ -1,6 +1,7 @@
 <template>
   <div class="setting">
     <md-tabs class="setting-tabs">
+      <!-- todo 相关设置 -->
       <md-tab md-label="Todo">
         <md-content class="setting-content">
           <md-switch v-model="hasTodoTag" class="md-primary" >启用Todo标签前缀</md-switch>
@@ -8,11 +9,13 @@
           ></md-chips>
         </md-content>
       </md-tab>
+      <!-- note 相关设置 -->
       <md-tab md-label="Note">
         <md-content>
           Note setting
         </md-content>
       </md-tab>
+      <!-- log 相关设置 -->
       <md-tab md-label="Log">
         <md-content>
           log setting
@@ -23,6 +26,9 @@
 </template>
 <script>
 import { mapFields } from 'vuex-map-fields'
+// import { mapMutations } from 'vuex'
+import db from 'src/localdb'
+
 export default {
   name: 'setting',
   computed: {
@@ -40,10 +46,9 @@ export default {
   },
   methods: {
     sortTag () {
-      let db = this.$db
-      let dones = db.get('dones').value()
-      let todos = db.get('todos').value()
-      let tags = db.get('setting').value().todo.todoTags.concat([]) // 正在使用的tags
+      let dones = db.getAllDones()
+      let todos = db.getTodos()
+      let tags = db.getSetting().todo.todoTags.concat([]) // 正在使用的tags
       let allTodos = [] // 所有todo
       allTodos.push(...todos)
       for (const day in dones) {
@@ -57,10 +62,10 @@ export default {
       })
       allTags = Array.from(new Set(allTags.concat(tags))) // 某些tag还没有todo
       let result = {} // 所有tag的使用次数的结果
-      allTags.forEach(e => {
+      allTags.forEach(e => { // 置0
         result[e] = 0
       })
-      allTodos.forEach(e => {
+      allTodos.forEach(e => { // 统计tag使用次数
         if (e.tag && allTags.includes(e.tag)) {
           result[e.tag] += 1
         }
@@ -81,7 +86,7 @@ export default {
   },
   updated () {
     let setting = this.$store.state.Setting
-    this.$db.set('setting', setting).write()
+    db.setSetting(setting)
   },
   mounted () {
     this.sortTag()
