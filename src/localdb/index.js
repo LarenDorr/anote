@@ -51,10 +51,5 @@ export default {
   },
   setSetting (setting) {
     db.set('setting', setting).write()
-  },
-  saveAll ({Setting, ToDo}) {
-    db.set('setting', Setting).write()
-    db.set(`dones.d${today}`, ToDo.dones).write()
-    db.set('todos', ToDo.todos).write()
   }
 }

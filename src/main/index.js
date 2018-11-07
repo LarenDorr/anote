@@ -21,7 +21,7 @@ const winURL = process.env.NODE_ENV === 'development'
   : `file://${__dirname}/index.html`
 
 let setting
-setting = db.get('setting.window').value() || {width: 600, height: 450}
+setting = db.read().get('setting.window').value() || {width: 600, height: 450}
 let {width, height, left = 0, top = 0} = setting
 
 function createWindow () {
@@ -42,7 +42,7 @@ function createWindow () {
   mainWindow.on('close', () => {
     let [width, height] = mainWindow.getSize()
     let [left, top] = mainWindow.getPosition()
-    db.set('setting.window', {
+    db.read().set('setting.window', {
       width: width,
       height: height,
       left: left,
