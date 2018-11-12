@@ -6,7 +6,7 @@
     <md-field class="item-content">
       <!-- todo tag 前缀 -->
       <span class="md-prefix item-tag" v-if="todoSetting.hasTodoTag">{{itemTag}}</span>
-      <md-input v-model="itemTmp.content" class="item-input"></md-input>
+      <md-input v-model="itemTmp.content" class="item-input" :isLazy="isLazy"></md-input>
       <!-- 是否重要icon -->
       <md-icon class="item-important" v-show="itemTmp.top">priority_high</md-icon>
     </md-field>
@@ -40,7 +40,8 @@ export default {
   },
   data () {
     return {
-      itemTmp: Object.assign({}, this.item) // 拷贝传入值,不能直接改动props
+      itemTmp: Object.assign({}, this.item), // 拷贝传入值,不能直接改动props
+      isLazy: true
     }
   },
   computed: {

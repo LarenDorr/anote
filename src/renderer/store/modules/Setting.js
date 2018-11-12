@@ -1,4 +1,5 @@
 import { getField, updateField } from 'vuex-map-fields'
+
 const state = {
   todo: {},
   note: {},

@@ -5,7 +5,11 @@
       <md-tab md-label="Todo">
         <md-content class="setting-content">
           <md-switch v-model="hasTodoTag" class="md-primary" >启用Todo标签前缀</md-switch>
-          <md-chips v-model="todoTags" md-placeholder="添加Todo标签前缀" :md-static="!hasTodoTag"
+          <md-chips 
+            v-model="todoTags" 
+            md-placeholder="添加Todo标签前缀" 
+            :md-static="!hasTodoTag"
+            :md-clickable="false"
           ></md-chips>
         </md-content>
       </md-tab>
@@ -37,7 +41,7 @@ export default {
     ]),
     todoTags: { // 为数组时需手动设置set,get
       get () {
-        return [].concat(this.$store.state.Setting.todo.todoTags)
+        return [].concat(this.$store.state.Setting.todo.todoTags) // 无法控制material组件数据的增删, 需使用拷贝值
       },
       set: function (val) {
         this.$store.commit('changeTags', val)

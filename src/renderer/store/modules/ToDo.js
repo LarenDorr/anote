@@ -16,8 +16,8 @@ const mutations = {
         })
       },
       'top' () {
-        state.todos = state.todos.filter(e => e.key !== item.key)
-        if (item.top === true) {
+        state.todos = state.todos.filter(e => e.key !== item.key) // 先剔除改变的todo
+        if (item.top === true) { // 根据top变化push或者unshift
           state.todos.unshift(item)
         } else {
           state.todos.push(item)
