@@ -45,6 +45,14 @@ export default {
       'todoSetting': state => state.Setting.todo // 相关的todo设置项
     })
   },
+  watch: {
+    todos () {
+      this.putData()
+    },
+    dones () {
+      this.putData()
+    }
+  },
   methods: {
     handleChange (item) {
       let prop = this.diffChange(item)

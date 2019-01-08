@@ -6,7 +6,7 @@
     <md-field class="item-content">
       <!-- todo tag 前缀 -->
       <span class="md-prefix item-tag" v-if="todoSetting.hasTodoTag">{{itemTag}}</span>
-      <md-input v-model="itemTmp.content" class="item-input" :isLazy="isLazy"></md-input>
+      <md-input v-model="itemTmp.content" class="item-input" :isLazy="isLazy" :disabled="this.isFreeze"></md-input>
       <!-- 是否重要icon -->
       <md-icon class="item-important" v-show="itemTmp.top">priority_high</md-icon>
     </md-field>

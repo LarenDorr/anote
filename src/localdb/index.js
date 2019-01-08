@@ -15,8 +15,6 @@ const defaultData = {
   }
 }
 
-let today = dayjs().format('YYYYMMDD')
-
 export default {
   getTodosCount () {
     let count = db.get('todosCount').value() || defaultData.todosCount
@@ -34,7 +32,7 @@ export default {
       db.set('todos', todos).write()
     }
   },
-  getDones (date = today) {
+  getDones (date = dayjs().format('YYYYMMDD')) {
     let dones = db.get(`dones.d${date}`).value() || defaultData.dones
     return dones
   },
@@ -42,7 +40,9 @@ export default {
     let allDones = db.get('dones').value() || {}
     return allDones
   },
-  setDones (dones, date = today) {
+  setDones (dones, date = dayjs().format('YYYYMMDD')) {
+    let today = dayjs().date()
+    dones = dones.filter(done => dayjs.unix(done.doneDate).date() === today)
     db.set(`dones.d${date}`, dones).write()
   },
   getSetting () {

@@ -1,15 +1,12 @@
 <template>
   <div class="log">
-    <md-field>
-      <md-input v-model="val" :isLazy="false"></md-input>
-    </md-field>
+    Log
   </div>
 </template>
 <script>
 export default {
   data () {
     return {
-      val: ''
     }
   }
 }

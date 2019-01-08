@@ -10,7 +10,7 @@
     <!-- new Todo -->
     <md-field>
       <label>Want to do</label>
-      <md-input v-model="newToDo.content" @keyup.enter="onAddTodo" :isLazy="true"></md-input>
+      <md-input v-model="newToDo.content" @keyup.enter="onAddTodo" ></md-input>
     </md-field>
     <!-- clear button -->
     <md-button class="md-icon-button" @click="onClear">
