@@ -1,5 +1,6 @@
 <template>
   <div class="topbar">
+    <div class="line fix-drag"></div>
     <md-toolbar>
       <div class="md-toolbar-section-start">
         <span class="md-title">ANote</span>
@@ -55,5 +56,9 @@
   }
   .topbar .md-toolbar{ /* 覆盖UI库默认样式 */
     min-height: 64px;
+  }
+  .line{
+    width: 100%;
+    height: 2px;
   }
 </style>

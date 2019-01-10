@@ -12,9 +12,30 @@ if (process.type !== 'renderer') {
     fs.mkdirpSync(STORE_PATH)
   }
 }
-
-const adapter = new FileSync(path.join(STORE_PATH, '/data.json'))
-
+const defaultData = {
+  todos: [],
+  dones: {},
+  todosCount: 0,
+  setting: {
+    todo: {
+      'hasTodoTag': true,
+      'todoTags': []
+    }
+  },
+  window: {
+    data: {
+      width: 600,
+      height: 450,
+      x: null,
+      y: null
+    },
+    isMax: false
+  }
+}
+let isFirst = !fs.existsSync(path.join(STORE_PATH, '/data2.json'))
+const adapter = new FileSync(path.join(STORE_PATH, '/data2.json'))
 const db = Datastore(adapter)
-
-export default db
+if (isFirst) { // 第一次使用时进行数据初始化
+  db.defaults(defaultData).write()
+}
+export default db.read()

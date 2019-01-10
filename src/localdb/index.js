@@ -3,28 +3,16 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 dayjs.locale('zh-cn')
 
-const defaultData = {
-  todos: [],
-  dones: [],
-  todosCount: 0,
-  setting: {
-    todo: {
-      'hasTodoTag': true,
-      'todoTags': []
-    }
-  }
-}
-
 export default {
   getTodosCount () {
-    let count = db.get('todosCount').value() || defaultData.todosCount
+    let count = db.get('todosCount').value()
     return count
   },
   setTodosCount (count) {
     db.set('todosCount', count).write()
   },
   getTodos () {
-    let todos = db.get('todos').value() || defaultData.todos
+    let todos = db.get('todos').value()
     return todos
   },
   setTodos (todos) {
@@ -33,11 +21,11 @@ export default {
     }
   },
   getDones (date = dayjs().format('YYYYMMDD')) {
-    let dones = db.get(`dones.d${date}`).value() || defaultData.dones
+    let dones = db.get(`dones.d${date}`).value() || []
     return dones
   },
   getAllDones () {
-    let allDones = db.get('dones').value() || {}
+    let allDones = db.get('dones').value()
     return allDones
   },
   setDones (dones, date = dayjs().format('YYYYMMDD')) {
@@ -46,10 +34,22 @@ export default {
     db.set(`dones.d${date}`, dones).write()
   },
   getSetting () {
-    let setting = db.get('setting').value() || defaultData.setting
+    let setting = db.get('setting').value()
     return setting
   },
   setSetting (setting) {
     db.set('setting', setting).write()
+  },
+  getWindowData () {
+    return db.get('window.data').value()
+  },
+  setWindowData (data) {
+    db.set('window.data', data).write()
+  },
+  getWindowIsMax () {
+    return db.get('window.isMax').value()
+  },
+  setWindowIsMax (isMax) {
+    db.set('window.isMax', isMax).write()
   }
 }

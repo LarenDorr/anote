@@ -22,7 +22,7 @@ import Content from '@/components/Content'
 import { mapMutations } from 'vuex'
 import db from 'src/localdb'
 
-let ipc = require('electron').ipcRenderer
+import { ipcRenderer } from 'electron'
 
 export default {
   name: 'app',
@@ -43,14 +43,14 @@ export default {
   },
   methods: {
     closeWindow  () {
-      ipc.send('closeMainWindow')
+      ipcRenderer.send('closeMainWindow')
     },
     changeWindowSize  () {
       if (this.isFullScreen) {
-        ipc.send('minSizeWindow')
+        ipcRenderer.send('minSizeWindow')
         this.isFullScreen = false
       } else {
-        ipc.send('maxSizeWindow')
+        ipcRenderer.send('maxSizeWindow')
         this.isFullScreen = true
       }
     },
@@ -63,11 +63,18 @@ export default {
     ])
   },
   mounted () {
+    // 初始化数据
     let todos = db.getTodos()
     let dones = db.getDones()
     let setting = db.getSetting()
+    let isMax = db.getWindowIsMax()
+    this.isFullScreen = isMax
     this.initTodo({todos, dones})
     this.initSetting(setting)
+    // 监听窗口变化
+    ipcRenderer.on('window-isMax', (event, isMax) => {
+      this.isFullScreen = isMax
+    })
   },
   components: {
     TopBar,
